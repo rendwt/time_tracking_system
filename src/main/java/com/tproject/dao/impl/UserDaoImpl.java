@@ -18,7 +18,6 @@ import java.util.logging.Logger;
 public class UserDaoImpl implements UserDao<User, Integer> {
     private static UserDaoImpl instance;
 
-
     public static UserDaoImpl getInstance() {
         UserDaoImpl localInstance = instance;
         if (localInstance == null) {

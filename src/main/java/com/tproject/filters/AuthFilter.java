@@ -66,7 +66,5 @@ public class AuthFilter extends HttpFilter {
             }
             chain.doFilter(request, response);
         }
-
-
     }
 }
