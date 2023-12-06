@@ -48,7 +48,12 @@ public class TaskController {
             Collection<TaskDto> tasks = taskService.getAllTasks(username);
             resp.setContentType("application/json");
             PrintWriter out = resp.getWriter();
-            out.println(jsonMapper.writeValueAsString(tasks));
+
+            if (tasks.isEmpty())
+                out.println("[]");
+            else
+                out.println(jsonMapper.writeValueAsString(tasks));
+
             return resp;
         }  catch (JwtException e) {
             return sendError(401, "Unauthorized: Invalid token", resp);
