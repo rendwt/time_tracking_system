@@ -1,5 +1,6 @@
 package com.tproject.controllers;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tproject.annotations.Controller;
 import com.tproject.annotations.HttpMethod;
@@ -28,6 +29,11 @@ public class TaskController {
         return resp;
     }
 
+    private boolean validateTaskDto(TaskDto taskDto) {
+
+        return taskDto != null && taskDto.getHours() == 0 && !taskDto.getDate().isEqual(null) && !taskDto.getDescription().isEmpty();
+    }
+
     @RequestMapping(url = "/list", method = HttpMethod.GET)
     public HttpServletResponse getAllTasks(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         try {
@@ -46,7 +52,8 @@ public class TaskController {
     public HttpServletResponse deleteTask(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         try {
             int taskId = Integer.parseInt(req.getParameter("id"));
-            taskService.deleteTask(taskId);
+            if (taskService.deleteTask(taskId))
+                resp.setStatus(204);
             return resp;
         } catch (CustomSQLException e) {
             return sendError(500, e.getMessage(), resp);
@@ -71,11 +78,18 @@ public class TaskController {
     public HttpServletResponse addTask(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         try {
             String taskData = req.getReader().lines().reduce("", String::concat);
-            TaskDto newTask = jsonMapper.readValue(taskData, TaskDto.class);
+            JsonNode jsonNode = jsonMapper.readTree(taskData);
 
-            if(taskService.createTask(newTask).isPresent())
-                resp.setStatus(201);
-            return resp;
+            TaskDto newTask = jsonMapper.treeToValue(jsonNode, TaskDto.class);
+
+            if (validateTaskDto(newTask)) {
+                if (taskService.createTask(newTask).isPresent()) {
+                    resp.setStatus(201);
+                }
+                return resp;
+            } else {
+                return sendError(400, "Invalid task data", resp);
+            }
         } catch (CustomSQLException e) {
             return sendError(500, e.getMessage(), resp);
         }
@@ -88,9 +102,12 @@ public class TaskController {
             if (taskIdParam != null) {
                 String taskData = req.getReader().lines().reduce("", String::concat);
                 TaskDto updatedTask = jsonMapper.readValue(taskData, TaskDto.class);
-
-                taskService.updateTask(updatedTask);
-
+                if (validateTaskDto(updatedTask)) {
+                    taskService.updateTask(updatedTask);
+                    resp.setStatus(200);
+                } else {
+                    return sendError(400, "Invalid task data", resp);
+                }
                 return resp;
             } else {
                 return sendError(400, "Task ID not specified", resp);
