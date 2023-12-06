@@ -1,7 +1,6 @@
 package com.tproject.entity;
 
 import lombok.*;
-
 import java.time.LocalDate;
 
 @Getter
