@@ -42,7 +42,7 @@ public class TaskDaoImpl implements TaskDao{
     }
 
     @Override
-    public Optional<Task> findTaskById(int id) throws  CustomSQLException{
+    public Optional<Task> findTaskById(int id) throws CustomSQLException{
         Optional<Task> task = Optional.empty();
         String sql = "SELECT * FROM task WHERE id = ?";
 
