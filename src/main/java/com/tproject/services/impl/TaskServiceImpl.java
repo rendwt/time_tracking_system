@@ -35,7 +35,7 @@ public class TaskServiceImpl implements TaskService {
         return localInstance;
     }
 
-    public TaskDto findTaskById(int id) throws CustomSQLException {
+    public TaskDto getTaskById(int id) throws CustomSQLException {
         try {
             return mapper.taskToDto(taskDao.findTaskById(id).orElseThrow(() -> new CustomSQLException("Task not found")));
         } catch (CustomSQLException e) {

@@ -42,23 +42,32 @@ public class TaskDaoImpl implements TaskDao{
     }
 
     @Override
-    public Optional<Task> findTaskById(int id) throws CustomSQLException{
+    public Optional<Task> findTaskById(int id) throws CustomSQLException {
         Optional<Task> task = Optional.empty();
         String sql = "SELECT * FROM task WHERE id = ?";
+        Connection conn = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
 
-        try (Connection conn = JdbcConnection.getInstance().getConnection();
-             PreparedStatement statement = conn.prepareStatement(sql)) {
+        try {
+            conn = JdbcConnection.getInstance().getConnection();
+            conn.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
+            conn.setAutoCommit(false);
 
+            statement = conn.prepareStatement(sql);
             statement.setInt(1, id);
-            ResultSet resultSet = statement.executeQuery();
+            resultSet = statement.executeQuery();
 
             if (resultSet.next()) {
                 task = Optional.of(composeTask(resultSet));
                 LOGGER.log(Level.INFO, "Found {0} in database", task);
             }
-        } catch (SQLException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
-            throw new CustomSQLException("Error fetching task with id: " + id);
+
+            conn.commit();
+        } catch (SQLException e) {
+            handleSQLException(conn, "Error fetching task");
+        } finally {
+            closeResources(conn, statement, resultSet);
         }
         return task;
     }
@@ -66,34 +75,48 @@ public class TaskDaoImpl implements TaskDao{
 
 
     @Override
-    public Collection<Task> getAllTasksFromUser(int userId) throws CustomSQLException{
+    public Collection<Task> getAllTasksFromUser(int userId) throws CustomSQLException {
         Collection<Task> tasks = new ArrayList<>();
         String sql = "SELECT * FROM task WHERE user_id = ?";
+        Connection conn = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
 
-        try (Connection conn = JdbcConnection.getInstance().getConnection();
-             PreparedStatement statement = conn.prepareStatement(sql)) {
+        try {
+            conn = JdbcConnection.getInstance().getConnection();
+            conn.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
+            conn.setAutoCommit(false);
 
+            statement = conn.prepareStatement(sql);
             statement.setInt(1, userId);
-            ResultSet resultSet = statement.executeQuery();
+            resultSet = statement.executeQuery();
 
             while (resultSet.next()) {
                 tasks.add(composeTask(resultSet));
                 LOGGER.log(Level.INFO, "Found {0} in database", composeTask(resultSet));
             }
-        } catch (SQLException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
-            throw new CustomSQLException("Error fetching tasks for user: " + userId);
+
+            conn.commit();
+        } catch (SQLException e) {
+            handleSQLException(conn, "Error fetching tasks for user: " + userId);
+        } finally {
+            closeResources(conn, statement, resultSet);
         }
         return tasks;
     }
 
     @Override
-    public Optional<Integer> saveTask(Task task) throws CustomSQLException{
+    public Optional<Integer> saveTask(Task task) throws CustomSQLException {
         String sql = "INSERT INTO task (user_id, date, hours, description) VALUES (?, ?, ?, ?)";
+        Connection conn = null;
+        PreparedStatement statement = null;
 
-        try (Connection conn = JdbcConnection.getInstance().getConnection();
-             PreparedStatement statement = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+        try {
+            conn = JdbcConnection.getInstance().getConnection();
+            conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+            conn.setAutoCommit(false);
 
+            statement = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             statement.setInt(1, task.getUserId());
             statement.setDate(2, Date.valueOf(task.getDate()));
             statement.setFloat(3, task.getHours());
@@ -108,20 +131,28 @@ public class TaskDaoImpl implements TaskDao{
                     return Optional.of(taskId);
                 }
             }
-        } catch (SQLException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
-            throw new CustomSQLException("Error saving task: " + ex.getMessage());
+
+            conn.commit();
+        } catch (SQLException e) {
+            handleSQLException(conn, "Error saving task: " + e.getMessage());
+        } finally {
+            closeResources(conn, statement, null);
         }
         return Optional.empty();
     }
 
     @Override
-    public Task updateTask(Task task) throws NonExistentEntityException, CustomSQLException{
+    public Task updateTask(Task task) throws NonExistentEntityException, CustomSQLException {
         String sql = "UPDATE task SET date = ?, hours = ?, description = ? WHERE id = ?";
+        Connection conn = null;
+        PreparedStatement statement = null;
 
-        try (Connection conn = JdbcConnection.getInstance().getConnection();
-             PreparedStatement statement = conn.prepareStatement(sql)) {
+        try {
+            conn = JdbcConnection.getInstance().getConnection();
+            conn.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
+            conn.setAutoCommit(false);
 
+            statement = conn.prepareStatement(sql);
             statement.setDate(1, Date.valueOf(task.getDate()));
             statement.setFloat(2, task.getHours());
             statement.setString(3, task.getDescription());
@@ -133,30 +164,78 @@ public class TaskDaoImpl implements TaskDao{
             if (rowsUpdated == 0) {
                 throw new NonExistentEntityException("Failed to update task with ID: " + task.getId());
             }
-        } catch (SQLException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
-            throw new CustomSQLException("Error updating task: " + ex.getMessage());
+
+            conn.commit();
+        } catch (SQLException e) {
+            handleSQLException(conn, "Error updating task: " + e.getMessage());
+        } finally {
+            closeResources(conn, statement, null);
         }
         return task;
     }
 
     @Override
-    public boolean deleteTask(int id) throws CustomSQLException{
+    public boolean deleteTask(int id) throws CustomSQLException {
         String sql = "DELETE FROM task WHERE id = ?";
+        Connection conn = null;
+        PreparedStatement statement = null;
 
-        try (Connection conn = JdbcConnection.getInstance().getConnection();
-             PreparedStatement statement = conn.prepareStatement(sql)) {
+        try {
+            conn = JdbcConnection.getInstance().getConnection();
+            conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+            conn.setAutoCommit(false);
 
+            statement = conn.prepareStatement(sql);
             statement.setInt(1, id);
             int rowsDeleted = statement.executeUpdate();
+            conn.commit();
             return rowsDeleted > 0;
 
-        } catch (SQLException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
-            throw new CustomSQLException("Error deleting task: " + ex.getMessage());
+        } catch (SQLException e) {
+            handleSQLException(conn, "Error deleting task: " + e.getMessage());
+        } finally {
+            closeResources(conn, statement, null);
+        }
+        return false;
+    }
+
+    public void closeResources(Connection connection, PreparedStatement statement, ResultSet resultSet) {
+        try {
+            if (resultSet != null && !resultSet.isClosed()) {
+                resultSet.close();
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Error closing ResultSet: " + e.getMessage());
+        }
+
+        try {
+            if (statement != null && !statement.isClosed()) {
+                statement.close();
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Error closing PreparedStatement: " + e.getMessage());
+        }
+
+        try {
+            if (connection != null && !connection.isClosed()) {
+                connection.close();
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Error closing Connection: " + e.getMessage());
         }
     }
 
+    private void handleSQLException(Connection conn, String message) {
+        try {
+            if (conn != null && !conn.getAutoCommit()) {
+                conn.rollback();
+            }
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Error during rollback: " + ex.getMessage());
+        }
+        LOGGER.log(Level.SEVERE, message);
+        throw new CustomSQLException(message);
+    }
 }
 
 

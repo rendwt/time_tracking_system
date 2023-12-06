@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface TaskService {
 
-    <Optional> TaskDto findTaskById(int id) throws CustomSQLException;
+    <Optional> TaskDto getTaskById(int id) throws CustomSQLException;
 
     Collection<TaskDto> getAllTasks(int userId)  throws CustomSQLException;
 
