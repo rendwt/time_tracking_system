@@ -7,7 +7,11 @@ import com.tproject.annotations.HttpMethod;
 import com.tproject.annotations.RequestMapping;
 import com.tproject.dto.TaskDto;
 import com.tproject.exception.CustomSQLException;
+import com.tproject.services.impl.JWTServiceImpl;
 import com.tproject.services.impl.TaskServiceImpl;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.JwtException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -36,14 +40,19 @@ public class TaskController {
 
     @RequestMapping(url = "/list", method = HttpMethod.GET)
     public HttpServletResponse getAllTasks(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+
         try {
-            int userId = Integer.parseInt(req.getParameter("user_id"));
-            Collection<TaskDto> tasks = taskService.getAllTasks(userId);
+            Jws<Claims> jws = JWTServiceImpl.getInstance().verifyUserToken(req.getHeader("Authorization"));
+            String username = jws.getBody().get("user", String.class);
+
+            Collection<TaskDto> tasks = taskService.getAllTasks(username);
             resp.setContentType("application/json");
             PrintWriter out = resp.getWriter();
             out.println(jsonMapper.writeValueAsString(tasks));
             return resp;
-        } catch (CustomSQLException e) {
+        }  catch (JwtException e) {
+            return sendError(401, "Unauthorized: Invalid token", resp);
+        }catch (CustomSQLException e) {
             return sendError(500, e.getMessage(), resp);
         }
     }
@@ -52,6 +61,7 @@ public class TaskController {
     public HttpServletResponse deleteTask(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         try {
             int taskId = Integer.parseInt(req.getParameter("id"));
+
             if (taskService.deleteTask(taskId))
                 resp.setStatus(204);
             return resp;
@@ -64,6 +74,7 @@ public class TaskController {
     public HttpServletResponse getTaskById(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         try {
             int taskId = Integer.parseInt(req.getParameter("id"));
+
             TaskDto task = taskService.getTaskById(taskId);
             resp.setContentType("application/json");
             PrintWriter out = resp.getWriter();
@@ -79,7 +90,6 @@ public class TaskController {
         try {
             String taskData = req.getReader().lines().reduce("", String::concat);
             JsonNode jsonNode = jsonMapper.readTree(taskData);
-
             TaskDto newTask = jsonMapper.treeToValue(jsonNode, TaskDto.class);
 
             if (validateTaskDto(newTask)) {
@@ -99,6 +109,7 @@ public class TaskController {
     public HttpServletResponse updateTask(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         try {
             String taskIdParam = req.getParameter("id");
+
             if (taskIdParam != null) {
                 String taskData = req.getReader().lines().reduce("", String::concat);
                 TaskDto updatedTask = jsonMapper.readValue(taskData, TaskDto.class);
