@@ -8,15 +8,15 @@ import java.util.Optional;
 
 public interface UserService {
 
-    <Optional> UserDto findUserById(int id) throws CustomSQLException;
+    //<Optional> UserDto findUserById(int id) throws CustomSQLException;
 
     <Optional>UserDto findUserByUsername(String username)  throws CustomSQLException;
 
-    Collection<UserDto> getAllUsers()  throws CustomSQLException;
+    //Collection<UserDto> getAllUsers()  throws CustomSQLException;
 
-    Optional<Integer> createUser(final UserDto userDto)  throws CustomSQLException;
+    //Optional<Integer> createUser(final UserDto userDto)  throws CustomSQLException;
 
-    UserDto updateUser(final UserDto userDto)  throws CustomSQLException;
+    //UserDto updateUser(final UserDto userDto)  throws CustomSQLException;
 
-    boolean deleteUser(int id)  throws CustomSQLException;
+    //boolean deleteUser(int id)  throws CustomSQLException;
 }

@@ -46,7 +46,7 @@ public class UserDaoImpl implements UserDao<User, Integer> {
     }
 
 
-    @Override
+   /* @Override
     public Optional<User> findUser(int id) throws CustomSQLException, NonExistentUserException{
         Optional<User> userOpt = Optional.empty();
         String sql = "SELECT * FROM users WHERE user_id = ?";
@@ -67,7 +67,7 @@ public class UserDaoImpl implements UserDao<User, Integer> {
             throw new CustomSQLException("findUser - SQL Exception");
         }
         return userOpt;
-    }
+    }*/
 
     @Override
     public Optional<User> findUser(String login)  throws CustomSQLException, NonExistentUserException{
@@ -94,34 +94,32 @@ public class UserDaoImpl implements UserDao<User, Integer> {
         return userOpt;
     }
 
-//    @Override
-//    public Optional<Credentials> getCredentials(String login) {
-////        return connection.flatMap(conn -> {
-//        Optional<Credentials> credOpt = Optional.empty();
-//        String sql = "SELECT password FROM users WHERE username = ?";
-//
-//        try (Connection conn = JdbcConnection.getInstance().getConnection();
-//             PreparedStatement statement = conn.prepareStatement(sql)) {
-//            statement.setString(1, login);
-//
-//            ResultSet resultSet = statement.executeQuery();
-//
-//            if (resultSet.next()) {
-//                String password = resultSet.getString("password");
-//                System.out.println(password);
-//                credOpt = Optional.of(new Credentials(login, password));
-//
-//                LOGGER.log(Level.INFO, "Found {0} in database", credOpt.get());
-//            }
-//        } catch (SQLException ex) {
-//            LOGGER.log(Level.SEVERE, null, ex);
-//        }
-//
-//        return credOpt;
-////        });
-//    }
+    /*@Override
+    public Optional<Credentials> getCredentials(String login) {
+        Optional<Credentials> credOpt = Optional.empty();
+        String sql = "SELECT password FROM users WHERE username = ?";
 
-    @Override
+        try (Connection conn = JdbcConnection.getInstance().getConnection();
+             PreparedStatement statement = conn.prepareStatement(sql)) {
+            statement.setString(1, login);
+
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                String password = resultSet.getString("password");
+                System.out.println(password);
+                credOpt = Optional.of(new Credentials(login, password));
+
+                LOGGER.log(Level.INFO, "Found {0} in database", credOpt.get());
+            }
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
+        }
+
+        return credOpt;
+    }*/
+
+    /*@Override
     public Collection<User> getAll()  throws CustomSQLException{
         Collection<User> users = new ArrayList<>();
         String sql = "SELECT * FROM users ORDER BY user_id";
@@ -144,9 +142,9 @@ public class UserDaoImpl implements UserDao<User, Integer> {
         }
 
         return users;
-    }
+    }*/
 
-    @Override
+    /*@Override
     public Optional<Integer> saveUser(User User)  throws CustomSQLException{
         String message = "The User to be added should not be null";
         User nonNullUser = Objects.requireNonNull(User, message);
@@ -182,9 +180,9 @@ public class UserDaoImpl implements UserDao<User, Integer> {
         }
 
         return generatedId;
-    }
+    }*/
 
-    @Override
+    /*@Override
     public User updateUser(User user)  throws CustomSQLException{
         String message = "The user to be updated should not be null";
         User nonNullUser = Objects.requireNonNull(user, message);
@@ -213,9 +211,9 @@ public class UserDaoImpl implements UserDao<User, Integer> {
             throw new CustomSQLException("updateUser - SQL Exception");
         }
         return user;
-    }
+    }*/
 
-    @Override
+    /*@Override
     public boolean deleteUser(int id)  throws CustomSQLException{
         String sql = "DELETE FROM users WHERE user_id = ?";
 
@@ -235,6 +233,5 @@ public class UserDaoImpl implements UserDao<User, Integer> {
             LOGGER.log(Level.SEVERE, null, ex);
             throw new CustomSQLException("deleteUser - SQL Exception");
         }
-    }
-
+    }*/
 }

@@ -38,21 +38,21 @@ public class UserServiceImpl implements UserService {
         return localInstance;
     }
 
-//    public static UserServiceImpl getInstance() {
-//        if (instance == null) {
-//            instance = new UserServiceImpl();
-//        }
-//        return instance;
-//    }
+    /*public static UserServiceImpl getInstance() {
+        if (instance == null) {
+            instance = new UserServiceImpl();
+        }
+        return instance;
+    }
+*/
 
-
-    public UserDto findUserById(int id) throws RuntimeException{
+    /*public UserDto findUserById(int id) throws RuntimeException{
         try {
             return mapper.userToDto(userDao.findUser(id).get());
         } catch (RuntimeException e) {
             throw e;
         }
-    }
+    }*/
 
 
     public UserDto findUserByUsername(String username) throws CustomSQLException {
@@ -64,40 +64,40 @@ public class UserServiceImpl implements UserService {
     }
 
 
-    public Collection<UserDto> getAllUsers() throws CustomSQLException {
+    /*public Collection<UserDto> getAllUsers() throws CustomSQLException {
         try {
             return mapper.userToDtoCollection(userDao.getAll());
         } catch (CustomSQLException e) {
             throw e;
         }
-    }
+    }*/
 
-    public Optional<Integer> createUser(final UserDto userDto) throws CustomSQLException {
+    /*public Optional<Integer> createUser(final UserDto userDto) throws CustomSQLException {
         try {
             User user = mapper.dtoToUser(userDto);
             return userDao.saveUser(user);
         } catch (CustomSQLException e) {
             throw e;
         }
-    }
+    }*/
 
 
-    public UserDto updateUser(final UserDto userDto) throws CustomSQLException {
+    /*public UserDto updateUser(final UserDto userDto) throws CustomSQLException {
         try {
             return mapper.userToDto(
                     userDao.updateUser(mapper.dtoToUser(userDto)));
         } catch (CustomSQLException e) {
             throw e;
         }
-    }
+    }*/
 
-    public boolean deleteUser(int id) throws CustomSQLException {
+    /*public boolean deleteUser(int id) throws CustomSQLException {
         try {
             return userDao.deleteUser(id);
         } catch (CustomSQLException e) {
             throw e;
         }
-    }
+    }*/
 
     public boolean verifyUser(String login, String password){
         Optional<User> optionalUser = userDao.findUser(login);
