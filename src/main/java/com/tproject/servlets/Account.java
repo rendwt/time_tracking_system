@@ -33,8 +33,6 @@ public class Account extends HttpServlet {
 
         } else {
             resp.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized access");
-            //autorize pls you fucking shit
-            //dd redirwct to login page
         }
     }
 
@@ -44,11 +42,6 @@ public class Account extends HttpServlet {
                 .map(Cookie::getValue)
                 .findAny();
     }
-
-//    public static User getUserById(int id) throws NonExistentEntityException {
-////        Optional<User> User = USER_DAO.findUser(id);
-////        return User.orElseThrow(NonExistentUserException::new);
-//    }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

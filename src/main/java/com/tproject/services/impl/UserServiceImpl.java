@@ -72,11 +72,6 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-
-//    public Collection<UserDto> getAllUsersFromCompany(String company) {
-//        return mapper.userToDtoCollection(userDao.getAllFromCompany(company));
-//    }
-
     public Optional<Integer> createUser(final UserDto userDto) throws CustomSQLException {
         try {
             User user = mapper.dtoToUser(userDto);

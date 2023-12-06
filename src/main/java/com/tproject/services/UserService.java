@@ -14,8 +14,6 @@ public interface UserService {
 
     Collection<UserDto> getAllUsers()  throws CustomSQLException;
 
-//    Collection<UserDto> getAllUsersFromCompany(String company)  throws CustomSQLException;
-
     Optional<Integer> createUser(final UserDto userDto)  throws CustomSQLException;
 
     UserDto updateUser(final UserDto userDto)  throws CustomSQLException;

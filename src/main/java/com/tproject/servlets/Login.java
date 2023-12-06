@@ -43,7 +43,6 @@ public class Login extends HttpServlet {
 
             System.out.println("doPost=====================" + credentials.get().getUsername());
 
-
             if (DigestUtils.sha256Hex(anonymous.getPassword()).equals(credentials.get().getPassword())) {
                 //auth cookie
                 String authCookie = DigestUtils.sha256Hex(anonymous.getUsername());
@@ -54,7 +53,6 @@ public class Login extends HttpServlet {
             } else {
                 //error
             }
-
 //        } catch (NonExistentEntityException ex) {
 ////            LOGGER.log(Level.WARNING, ex.getMessage());
 //        }
