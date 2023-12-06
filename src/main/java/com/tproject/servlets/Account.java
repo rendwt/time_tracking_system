@@ -24,9 +24,7 @@ public class Account extends HttpServlet {
         ObjectMapper objectMapper = new ObjectMapper();
         Optional<String> auth = readCookie("auth", req);
         if (auth.isPresent()) {
-            Optional<String> authCompany = readCookie("authcompany", req);
-
-            Collection<User> users = USER_DAO.getAllFromCompany(authCompany.get());
+            Collection<User> users = USER_DAO.getAll();
             String json = objectMapper.writeValueAsString(users);
             resp.setContentType("application/json");
             PrintWriter printWriter = resp.getWriter();
@@ -34,8 +32,7 @@ public class Account extends HttpServlet {
             printWriter.close();
 
         } else {
-            //autorize pls you fucking shit
-            //dd redirwct to login page
+            resp.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized access");
         }
     }
 
@@ -45,11 +42,6 @@ public class Account extends HttpServlet {
                 .map(Cookie::getValue)
                 .findAny();
     }
-
-//    public static User getUserById(int id) throws NonExistentEntityException {
-////        Optional<User> User = USER_DAO.findUser(id);
-////        return User.orElseThrow(NonExistentUserException::new);
-//    }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

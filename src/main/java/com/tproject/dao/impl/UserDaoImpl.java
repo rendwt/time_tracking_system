@@ -148,30 +148,6 @@ public class UserDaoImpl implements UserDao<User, Integer> {
     }
 
     @Override
-    public Collection<User> getAllFromCompany(String company)  throws CustomSQLException{
-        Collection<User> users = new ArrayList<>();
-        String sql = "SELECT * FROM users WHERE company = ? ORDER BY user_id";
-
-        try (Connection conn = JdbcConnection.getInstance().getConnection();
-             PreparedStatement statement = conn.prepareStatement(sql)) {
-            statement.setString(1, company);
-            ResultSet resultSet = statement.executeQuery();
-
-            while (resultSet.next()) {
-                User user = composeUser(resultSet);
-
-                users.add(user);
-
-                LOGGER.log(Level.INFO, "Found {0} in database", user);
-            }
-        } catch (SQLException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
-            throw new CustomSQLException("getAllFromCompany - SQL Exception");
-        }
-        return users;
-    }
-
-    @Override
     public Optional<Integer> saveUser(User User)  throws CustomSQLException{
         String message = "The User to be added should not be null";
         User nonNullUser = Objects.requireNonNull(User, message);

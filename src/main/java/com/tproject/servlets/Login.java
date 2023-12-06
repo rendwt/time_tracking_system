@@ -19,16 +19,12 @@ import java.util.Optional;
 public class Login extends HttpServlet {
 
     private static final String AUTH_COOKIE = "auth";
-    private static final String AUTH_COMP_COOKIE = "authcompany";
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         Cookie userNameCookieRemove = new Cookie(AUTH_COOKIE, "");
-        Cookie userCompanyCookieRemove = new Cookie(AUTH_COMP_COOKIE, "");
         userNameCookieRemove.setMaxAge(0);
-        userCompanyCookieRemove.setMaxAge(0);
         resp.addCookie(userNameCookieRemove);
-        resp.addCookie(userCompanyCookieRemove);
     }
 
     @Override
@@ -47,8 +43,6 @@ public class Login extends HttpServlet {
 
             System.out.println("doPost=====================" + credentials.get().getUsername());
 
-//            Optional<User> credentials = Optional.of(getUserByUsername(anonymous.getUsername()));
-
             if (DigestUtils.sha256Hex(anonymous.getPassword()).equals(credentials.get().getPassword())) {
                 //auth cookie
                 String authCookie = DigestUtils.sha256Hex(anonymous.getUsername());
@@ -56,21 +50,11 @@ public class Login extends HttpServlet {
                 resp.addCookie(authUiCookie);
                 authUiCookie.setDomain(req.getContextPath());
 
-//                String companyCookie = credentials.get().getCompany();
-//                Cookie compUiCookie = new Cookie(AUTH_COMP_COOKIE, companyCookie);
-//                resp.addCookie(compUiCookie);
-//                compUiCookie.setDomain(req.getContextPath());
             } else {
                 //error
             }
-
 //        } catch (NonExistentEntityException ex) {
 ////            LOGGER.log(Level.WARNING, ex.getMessage());
 //        }
-
-
     }
-
-
-
 }

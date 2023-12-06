@@ -13,7 +13,6 @@ public interface UserDao<T, I> {
 //    Optional<Credentials> getCredentials(String login);
     Collection<T> getAll();
 
-    Collection<T> getAllFromCompany(String company);
     Optional<I> saveUser(T t);
     User updateUser(T t);
     boolean deleteUser(int id);
