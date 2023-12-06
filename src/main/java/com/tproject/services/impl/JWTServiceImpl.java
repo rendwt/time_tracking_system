@@ -39,7 +39,6 @@ public class JWTServiceImpl {
         String result = Jwts.builder()
                 .setIssuer("GP01")
                 .claim("user", user.getUsername())  //set user
-                .claim("role", user.getRole())      //set role
                 .setIssuedAt(createdDate)              //set token creation date
                 .setExpiration(expirationDate)         //set token expiration date
                 .signWith(hmacKey)
