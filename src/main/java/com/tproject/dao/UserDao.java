@@ -8,7 +8,7 @@ import java.util.Collection;
 import java.util.Optional;
 
 public interface UserDao<T, I> {
-    //Optional<T> findUser(int id) throws SQLException, NonExistentUserException;
+    Optional<T> getUserIdByUsername(String username) throws SQLException, NonExistentUserException;
     Optional<T> findUser(String login) throws SQLException, NonExistentUserException;
     //Collection<T> getAll();
     //Optional<I> saveUser(T t);

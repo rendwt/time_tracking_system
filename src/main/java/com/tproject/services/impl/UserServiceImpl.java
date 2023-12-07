@@ -46,13 +46,13 @@ public class UserServiceImpl implements UserService {
     }
 */
 
-    /*public UserDto findUserById(int id) throws RuntimeException{
+    public UserDto getUserIdByUsername(String username) throws RuntimeException{
         try {
-            return mapper.userToDto(userDao.findUser(id).get());
+            return mapper.userToDto(userDao.findUser(username).get());
         } catch (RuntimeException e) {
             throw e;
         }
-    }*/
+    }
 
 
     public UserDto findUserByUsername(String username) throws CustomSQLException {

@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 
-@WebServlet("/test/*")
+@WebServlet("/*")
 public class Dispatcher extends HttpServlet {
 
     HandlerMethodHolder controllerHolder = HandlerMethodHolder.getInstance();

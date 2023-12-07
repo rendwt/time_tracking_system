@@ -39,21 +39,21 @@ public class UserDaoImpl implements UserDao<User, Integer> {
 
     private User composeUser(ResultSet resultSet) throws SQLException {
         User user = new User();
-        user.setId(resultSet.getInt("user_id"));
+        user.setId(resultSet.getInt("id"));
         user.setUsername(resultSet.getString("username"));
         user.setPassword(resultSet.getString("password"));
         return user;
     }
 
 
-   /* @Override
-    public Optional<User> findUser(int id) throws CustomSQLException, NonExistentUserException{
+   @Override
+    public Optional<User> getUserIdByUsername(String username) throws CustomSQLException, NonExistentUserException{
         Optional<User> userOpt = Optional.empty();
-        String sql = "SELECT * FROM users WHERE user_id = ?";
+        String sql = "SELECT id FROM users WHERE username = ?";
 
         try (Connection conn = JdbcConnection.getInstance().getConnection();
              PreparedStatement statement = conn.prepareStatement(sql)) {
-            statement.setInt(1, id);
+            statement.setString(1, username);
 
             ResultSet resultSet = statement.executeQuery();
 
@@ -67,7 +67,7 @@ public class UserDaoImpl implements UserDao<User, Integer> {
             throw new CustomSQLException("findUser - SQL Exception");
         }
         return userOpt;
-    }*/
+    }
 
     @Override
     public Optional<User> findUser(String login)  throws CustomSQLException, NonExistentUserException{
@@ -90,7 +90,7 @@ public class UserDaoImpl implements UserDao<User, Integer> {
             LOGGER.log(Level.SEVERE, null, ex);
             throw new CustomSQLException("findUser - SQL Exception");
         }
-
+        System.out.println(userOpt);
         return userOpt;
     }
 

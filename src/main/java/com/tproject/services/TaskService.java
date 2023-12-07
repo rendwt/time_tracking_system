@@ -11,7 +11,7 @@ public interface TaskService {
 
     <Optional> TaskDto getTaskById(int id) throws CustomSQLException;
 
-    Collection<TaskDto> getAllTasks(String username)  throws CustomSQLException;
+    Collection<TaskDto> getAllTasks(int userId)  throws CustomSQLException;
 
     Optional<Integer> createTask(final TaskDto taskDto)  throws CustomSQLException;
 

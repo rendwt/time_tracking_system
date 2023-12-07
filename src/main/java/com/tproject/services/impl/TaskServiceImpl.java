@@ -43,9 +43,9 @@ public class TaskServiceImpl implements TaskService {
         }
     }
 
-    public Collection<TaskDto> getAllTasks(String username) throws CustomSQLException {
+    public Collection<TaskDto> getAllTasks(int userId) throws CustomSQLException {
         try {
-            return mapper.taskToDtoCollection(taskDao.getAllTasksFromUser(username));
+            return mapper.taskToDtoCollection(taskDao.getAllTasksFromUser(userId));
         } catch (CustomSQLException e) {
             throw e;
         }

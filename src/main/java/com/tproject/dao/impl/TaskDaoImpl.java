@@ -76,9 +76,9 @@ public class TaskDaoImpl implements TaskDao{
 
 
     @Override
-    public Collection<Task> getAllTasksFromUser(String username) throws CustomSQLException {
+    public Collection<Task> getAllTasksFromUser(int userId) throws CustomSQLException {
         Collection<Task> tasks = new ArrayList<>();
-        String sql = "SELECT * FROM task WHERE username = ?";
+        String sql = "SELECT * FROM task WHERE user_id = ?";
         Connection conn = null;
         PreparedStatement statement = null;
         ResultSet resultSet = null;
@@ -89,7 +89,7 @@ public class TaskDaoImpl implements TaskDao{
             conn.setAutoCommit(false);
 
             statement = conn.prepareStatement(sql);
-            statement.setString(1, username);
+            statement.setInt(1, userId);
             resultSet = statement.executeQuery();
 
             while (resultSet.next())
@@ -97,7 +97,8 @@ public class TaskDaoImpl implements TaskDao{
 
             conn.commit();
         } catch (SQLException e) {
-            handleSQLException(conn, "Error fetching tasks for user: " + username);
+            e.printStackTrace();
+            handleSQLException(conn, "Error fetching tasks for userId: " + userId);
         } finally {
             closeResources(conn, statement, resultSet);
         }

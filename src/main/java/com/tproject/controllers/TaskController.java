@@ -9,6 +9,7 @@ import com.tproject.dto.TaskDto;
 import com.tproject.exception.CustomSQLException;
 import com.tproject.services.impl.JWTServiceImpl;
 import com.tproject.services.impl.TaskServiceImpl;
+import com.tproject.services.impl.UserServiceImpl;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
@@ -24,6 +25,7 @@ public class TaskController {
 
     private final ObjectMapper jsonMapper = new ObjectMapper();
     private final TaskServiceImpl taskService = TaskServiceImpl.getInstance();
+    private final UserServiceImpl userService = UserServiceImpl.getInstance();
 
     private HttpServletResponse sendError(int errorCode, String errorReason, HttpServletResponse resp) throws IOException {
         resp.setContentType("application/json");
@@ -42,10 +44,12 @@ public class TaskController {
     public HttpServletResponse getAllTasks(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
         try {
-            Jws<Claims> jws = JWTServiceImpl.getInstance().verifyUserToken(req.getHeader("Authorization"));
+            Jws<Claims> jws = JWTServiceImpl.getInstance().verifyUserToken(req.getHeader("Authorization").replace("Bearer ", ""));
             String username = jws.getBody().get("user", String.class);
 
-            Collection<TaskDto> tasks = taskService.getAllTasks(username);
+            int userId = userService.getUserIdByUsername(username).getId();
+
+            Collection<TaskDto> tasks = taskService.getAllTasks(userId);
             resp.setContentType("application/json");
             PrintWriter out = resp.getWriter();
 

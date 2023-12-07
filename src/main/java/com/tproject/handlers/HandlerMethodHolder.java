@@ -53,7 +53,7 @@ public class HandlerMethodHolder {
     protected void updateControllerMap() throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
 
         //set package to explore
-        Reflections reflections = new Reflections("com.gproject.controllers");
+        Reflections reflections = new Reflections("com.tproject.controllers");
 
         //get every class, marked with @Controller annotation
         Set<Class<?>> annotatedAsControllerClasses = reflections.get(SubTypes.of(TypesAnnotated.with(Controller.class)).asClass());

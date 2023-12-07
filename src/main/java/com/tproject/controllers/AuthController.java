@@ -31,18 +31,23 @@ public class AuthController {
 
 
     @RequestMapping(url = "/login", method = HttpMethod.POST)
-    public void login(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    public HttpServletResponse login(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+
         Credentials anonymous = jsonMapper.readValue(req.getReader(), Credentials.class);
+
         if (userService.verifyUser(anonymous.getUsername(),anonymous.getPassword())) {
             JWTServiceImpl jwtService = JWTServiceImpl.getInstance();
-            resp.setContentType("application/json");
             String token = jwtService.buildUserToken(anonymous);
 
+            resp.setContentType("application/json");
+            resp.setHeader("Access-Control-Expose-Headers", "Authorization");
             resp.setHeader("Authorization", "Bearer " + token);
-            resp.sendRedirect("/list");
+            return resp;
+
         } else {
             System.out.println("=========Login and/or password is incorrect===========");
             sendError(401, "Login and/or password is incorrect", resp);
         }
+        return resp;
     }
 }
