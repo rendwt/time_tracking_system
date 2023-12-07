@@ -4,12 +4,8 @@ import com.tproject.dao.UserDao;
 import com.tproject.entity.User;
 import com.tproject.exception.CustomSQLException;
 import com.tproject.exception.NonExistentUserException;
-import org.apache.commons.codec.digest.DigestUtils;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -90,7 +86,6 @@ public class UserDaoImpl implements UserDao<User, Integer> {
             LOGGER.log(Level.SEVERE, null, ex);
             throw new CustomSQLException("findUser - SQL Exception");
         }
-        System.out.println(userOpt);
         return userOpt;
     }
 

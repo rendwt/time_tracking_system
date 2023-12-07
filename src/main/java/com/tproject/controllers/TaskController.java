@@ -2,6 +2,7 @@ package com.tproject.controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.tproject.annotations.Controller;
 import com.tproject.annotations.HttpMethod;
 import com.tproject.annotations.RequestMapping;
@@ -23,7 +24,7 @@ import java.util.Collection;
 @Controller
 public class TaskController {
 
-    private final ObjectMapper jsonMapper = new ObjectMapper();
+    private final ObjectMapper jsonMapper = new ObjectMapper().registerModule(new JavaTimeModule());
     private final TaskServiceImpl taskService = TaskServiceImpl.getInstance();
     private final UserServiceImpl userService = UserServiceImpl.getInstance();
 
@@ -37,7 +38,7 @@ public class TaskController {
 
     private boolean validateTaskDto(TaskDto taskDto) {
 
-        return taskDto != null && taskDto.getHours() == 0 && !taskDto.getDate().isEqual(null) && !taskDto.getDescription().isEmpty();
+        return taskDto != null && taskDto.getHours() != 0 && !taskDto.getDescription().isEmpty();
     }
 
     @RequestMapping(url = "/list", method = HttpMethod.GET)
@@ -97,10 +98,15 @@ public class TaskController {
     @RequestMapping(url = "/task", method = HttpMethod.POST)
     public HttpServletResponse addTask(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         try {
+            Jws<Claims> jws = JWTServiceImpl.getInstance().verifyUserToken(req.getHeader("Authorization").replace("Bearer ", ""));
+            String username = jws.getBody().get("user", String.class);
+
+            int userId = userService.getUserIdByUsername(username).getId();
+
             String taskData = req.getReader().lines().reduce("", String::concat);
             JsonNode jsonNode = jsonMapper.readTree(taskData);
             TaskDto newTask = jsonMapper.treeToValue(jsonNode, TaskDto.class);
-
+            newTask.setUserId(userId);
             if (validateTaskDto(newTask)) {
                 if (taskService.createTask(newTask).isPresent()) {
                     resp.setStatus(201);

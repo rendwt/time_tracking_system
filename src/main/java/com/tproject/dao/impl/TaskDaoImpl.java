@@ -97,7 +97,6 @@ public class TaskDaoImpl implements TaskDao{
 
             conn.commit();
         } catch (SQLException e) {
-            e.printStackTrace();
             handleSQLException(conn, "Error fetching tasks for userId: " + userId);
         } finally {
             closeResources(conn, statement, resultSet);
@@ -125,6 +124,7 @@ public class TaskDaoImpl implements TaskDao{
             int rowsInserted = statement.executeUpdate();
 
             if (rowsInserted > 0) {
+                conn.commit();
                 ResultSet generatedKeys = statement.getGeneratedKeys();
                 if (generatedKeys.next()) {
                     int taskId = generatedKeys.getInt(1);
@@ -132,7 +132,6 @@ public class TaskDaoImpl implements TaskDao{
                 }
             }
 
-            conn.commit();
         } catch (SQLException e) {
             handleSQLException(conn, "Error saving task: " + e.getMessage());
         } finally {
