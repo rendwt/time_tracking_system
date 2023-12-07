@@ -4,8 +4,10 @@ import com.tproject.dao.UserDao;
 import com.tproject.entity.User;
 import com.tproject.exception.CustomSQLException;
 import com.tproject.exception.NonExistentUserException;
+import org.apache.commons.codec.digest.DigestUtils;
 
 import java.sql.*;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -139,12 +141,12 @@ public class UserDaoImpl implements UserDao<User, Integer> {
         return users;
     }*/
 
-    /*@Override
+    @Override
     public Optional<Integer> saveUser(User User)  throws CustomSQLException{
         String message = "The User to be added should not be null";
         User nonNullUser = Objects.requireNonNull(User, message);
         String sql = "INSERT INTO "
-                + "Users(username, password) "
+                + "users(username, password) "
                 + "VALUES(?, ?)";
         Optional<Integer> generatedId = Optional.empty();
 
@@ -175,7 +177,7 @@ public class UserDaoImpl implements UserDao<User, Integer> {
         }
 
         return generatedId;
-    }*/
+    }
 
     /*@Override
     public User updateUser(User user)  throws CustomSQLException{

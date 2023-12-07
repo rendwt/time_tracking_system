@@ -20,7 +20,7 @@ import java.util.List;
         urlPatterns = {"/test/*"} )
 public class AuthFilter extends HttpFilter {
 
-    private final List<String> ALLOWED_URL = List.of("/login", "/index.html");
+    private final List<String> ALLOWED_URL = List.of("/login", "/index.html", "/workstation");
 
     public void init(FilterConfig config) throws ServletException {
     }

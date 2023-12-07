@@ -72,14 +72,14 @@ public class UserServiceImpl implements UserService {
         }
     }*/
 
-    /*public Optional<Integer> createUser(final UserDto userDto) throws CustomSQLException {
+    public Optional<Integer> createUser(final UserDto userDto) throws CustomSQLException {
         try {
             User user = mapper.dtoToUser(userDto);
             return userDao.saveUser(user);
         } catch (CustomSQLException e) {
             throw e;
         }
-    }*/
+    }
 
 
     /*public UserDto updateUser(final UserDto userDto) throws CustomSQLException {
