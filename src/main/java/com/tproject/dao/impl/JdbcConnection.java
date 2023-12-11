@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 
 public class JdbcConnection {
 
-    private static String URL = "jdbc:mysql://34.67.104.200:3306/time_log_db";
+    private static String URL = "jdbc:mysql:/35.232.152.1:3306/time_log_db";
     private static String USER = "user";
     private static String PASSWORD = "Adminadmin123!";
     private static final Logger LOGGER =
